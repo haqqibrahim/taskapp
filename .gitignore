@@ -1,0 +1,7 @@
+TaskApp
+.env
+__pycache__
+f1-app-d2ac7-firebase-adminsdk-fbsvc-596f9d853c.json
+app.yaml
+*.json
+!package.json

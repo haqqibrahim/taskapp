@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task App - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-100 to-white flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Welcome Back</h2>
+                <p class="text-gray-500 mt-2">Sign in to your account or create a new one</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <input type="email" 
+                           id="email" 
+                           placeholder="Enter your email"
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none">
+                </div>
+                
+                <div>
+                    <input type="password" 
+                           id="password" 
+                           placeholder="Enter your password"
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none">
+                </div>
+
+                <div class="flex space-x-4">
+                    <button id="signup-btn" 
+                            class="w-1/2 bg-white border border-blue-500 text-blue-500 py-3 rounded-lg hover:bg-blue-50 transition duration-200">
+                        Sign Up
+                    </button>
+                    <button id="login-btn" 
+                            class="w-1/2 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-200">
+                        Log In
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button id="logout-btn" 
+                style="display:none;"
+                class="mt-4 w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition duration-200">
+            Logout
+        </button>
+        
+        <div id="auth-indicator" 
+             class="mt-4 text-center text-gray-600 font-medium">
+            Not logged in
+        </div>
+    </div>
+
+    <!-- Import our Firebase module and attach functions to global scope -->
+    <script type="module">
+        import { signup, login, logout } from "/static/js/firebase-login.js";
+        window.signup = signup;
+        window.login = login;
+        window.logout = logout;
+
+        document.getElementById("signup-btn").addEventListener("click", signup);
+        document.getElementById("login-btn").addEventListener("click", login);
+        document.getElementById("logout-btn").addEventListener("click", logout);
+    </script>
+</body>
+</html>

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task App - Board</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Header -->
+  <header class="bg-blue-500 text-white p-4 shadow">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Task Board</h1>
+      <div class="flex items-center space-x-4">
+        <span id="auth-indicator" class="text-sm">Not logged in</span>
+        <button id="logout-btn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto p-4">
+    <!-- Board Details Section -->
+    <div id="board-details" class="mb-6">
+      <!-- Board name, ID and owner controls (Rename, Add User, Remove Board, Members list) will be loaded here -->
+    </div>
+
+    <!-- Tasks Section -->
+    <section id="tasks-section" class="mb-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        <h2 class="text-xl font-bold">Tasks</h2>
+        <!-- Task counters -->
+        <div id="task-counters" class="text-sm text-gray-700 mt-2 md:mt-0"></div>
+        <button id="add-task-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">Add Task</button>
+      </div>
+      <div id="tasks-list" class="space-y-4">
+        <!-- Task cards will be appended here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal for Adding a User -->
+  <div id="add-user-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Add User to Board</h2>
+      <input type="email" id="add-user-email" placeholder="User email"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-add-user-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
+        <button id="submit-add-user-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Adding a Task -->
+  <div id="add-task-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Add New Task</h2>
+      <input type="text" id="task-title" placeholder="Task Title"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <input type="date" id="task-due-date"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="task-completed" class="mr-2">
+        <label for="task-completed" class="text-gray-700">Mark as complete</label>
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-task-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
+        <button id="submit-task-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Editing a Task -->
+  <div id="edit-task-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Edit Task</h2>
+      <input type="text" id="edit-task-title" placeholder="Task Title"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <textarea id="edit-task-description" placeholder="Task Description"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4"></textarea>
+      <input type="date" id="edit-task-due-date"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <!-- Field for assignment -->
+      <input type="text" id="edit-task-assigned" placeholder="Assigned To (comma-separated user IDs)"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="edit-task-completed" class="mr-2">
+        <label for="edit-task-completed" class="text-gray-700">Mark as complete</label>
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-edit-task-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
+        <button id="submit-edit-task-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Renaming the Board -->
+  <div id="rename-board-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Rename Board</h2>
+      <input type="text" id="new-board-name" placeholder="New Board Name"
+             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-rename-board-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
+        <button id="submit-rename-board-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete JavaScript Code -->
+  <script type="module">
+    import { logout } from "/static/js/firebase-login.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const auth = getAuth();
+    const authIndicator = document.getElementById("auth-indicator");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // boardId injected by FastAPI into the template
+    const boardId = "{{ board_id }}";
+    const boardDetails = document.getElementById("board-details");
+    const tasksList = document.getElementById("tasks-list");
+
+    let currentUserId = null;
+    let boardCreatorId = null;
+    let currentEditTaskId = null;
+    window.currentTasks = [];
+
+    // Rename Board Modal Elements
+    const renameBoardModal = document.getElementById("rename-board-modal");
+    const newBoardNameInput = document.getElementById("new-board-name");
+    const cancelRenameBoardBtn = document.getElementById("cancel-rename-board-btn");
+    const submitRenameBoardBtn = document.getElementById("submit-rename-board-btn");
+
+    // Add Task Modal Elements
+    const addTaskBtn = document.getElementById("add-task-btn");
+    const addTaskModal = document.getElementById("add-task-modal");
+    const cancelTaskBtn = document.getElementById("cancel-task-btn");
+    const submitTaskBtn = document.getElementById("submit-task-btn");
+    const taskTitleInput = document.getElementById("task-title");
+    const taskDueDateInput = document.getElementById("task-due-date");
+    const taskCompletedCheckbox = document.getElementById("task-completed");
+
+    // Edit Task Modal Elements
+    const editTaskModal = document.getElementById("edit-task-modal");
+    const cancelEditTaskBtn = document.getElementById("cancel-edit-task-btn");
+    const submitEditTaskBtn = document.getElementById("submit-edit-task-btn");
+    const editTaskTitleInput = document.getElementById("edit-task-title");
+    const editTaskDescriptionInput = document.getElementById("edit-task-description");
+    const editTaskDueDateInput = document.getElementById("edit-task-due-date");
+    const editTaskAssignedInput = document.getElementById("edit-task-assigned");
+    const editTaskCompletedCheckbox = document.getElementById("edit-task-completed");
+
+    // Add User Modal Elements
+    const addUserModal = document.getElementById("add-user-modal");
+    const cancelAddUserBtn = document.getElementById("cancel-add-user-btn");
+    const submitAddUserBtn = document.getElementById("submit-add-user-btn");
+    const addUserEmailInput = document.getElementById("add-user-email");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        authIndicator.textContent = `Logged in as ${user.email}`;
+        currentUserId = user.uid;
+        loadBoardDetails();
+        loadTasks();
+      } else {
+        authIndicator.textContent = "Not logged in";
+      }
+    });
+
+    logoutBtn.addEventListener("click", logout);
+
+    async function loadBoardDetails() {
+      try {
+        const response = await fetch(`/boards/${boardId}/details`);
+        const board = await response.json();
+        boardCreatorId = board.createdBy;
+        boardDetails.innerHTML = `<h2 class="text-2xl font-bold">
+                                    ${board.name} ${board.createdBy === currentUserId ? '<span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded ml-2">Creator</span>' : ''}
+                                  </h2>
+                                  <p class="text-gray-600">Board ID: ${board.id}</p>`;
+        // If current user is board owner, display owner controls: Rename, Add User, and Remove Board buttons.
+        if (currentUserId === boardCreatorId) {
+          let ownerContainer = document.getElementById("owner-buttons-container");
+          if (!ownerContainer) {
+            ownerContainer = document.createElement("div");
+            ownerContainer.id = "owner-buttons-container";
+            ownerContainer.className = "mt-4 flex flex-col md:flex-row md:space-x-4";
+            boardDetails.appendChild(ownerContainer);
+          } else {
+            ownerContainer.innerHTML = "";
+          }
+          // Rename Board Button
+          const renameButton = document.createElement("button");
+          renameButton.textContent = "Rename Board";
+          renameButton.className = "bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition";
+          renameButton.addEventListener("click", () => {
+            renameBoardModal.classList.remove("hidden");
+          });
+          // Add User Button
+          const addUserButton = document.createElement("button");
+          addUserButton.textContent = "Add User";
+          addUserButton.className = "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition";
+          addUserButton.addEventListener("click", () => {
+            addUserModal.classList.remove("hidden");
+          });
+          // Remove Board Button (only available if conditions are met)
+          const removeBoardButton = document.createElement("button");
+          removeBoardButton.textContent = "Remove Board";
+          removeBoardButton.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition";
+          removeBoardButton.addEventListener("click", async () => {
+            if (confirm("Are you sure you want to remove the board? It can only be removed if there are no non-owning users and no tasks.")) {
+              try {
+                const response = await fetch(`/boards/${boardId}`, {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ current_user_id: currentUserId })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  alert("Board removed successfully!");
+                  window.location.href = "/dashboard";
+                } else {
+                  alert("Error removing board: " + data.detail);
+                }
+              } catch (error) {
+                console.error("Error removing board:", error);
+                alert("An error occurred while removing the board.");
+              }
+            }
+          });
+          ownerContainer.appendChild(renameButton);
+          ownerContainer.appendChild(addUserButton);
+          ownerContainer.appendChild(removeBoardButton);
+          displayMembersList(board.members);
+        }
+      } catch (error) {
+        console.error("Error loading board details:", error);
+      }
+    }
+
+    function displayMembersList(members) {
+      let membersContainer = document.getElementById("members-list-container");
+      if (!membersContainer) {
+        membersContainer = document.createElement("div");
+        membersContainer.id = "members-list-container";
+        membersContainer.className = "mt-4";
+        boardDetails.appendChild(membersContainer);
+      }
+      membersContainer.innerHTML = `<h3 class="text-lg font-bold mb-2">Members:</h3>`;
+      const ul = document.createElement("ul");
+      ul.className = "space-y-2";
+      members.forEach(memberId => {
+        const li = document.createElement("li");
+        li.className = "flex items-center space-x-2";
+        li.textContent = memberId; // For demo; ideally resolve to email
+        if (memberId !== boardCreatorId) {
+          const removeBtn = document.createElement("button");
+          removeBtn.textContent = "Remove";
+          removeBtn.className = "bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded";
+          removeBtn.addEventListener("click", async () => {
+            if (confirm("Are you sure you want to remove this user?")) {
+              try {
+                const response = await fetch(`/boards/${boardId}/remove_user`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    userIdToRemove: memberId,
+                    current_user_id: currentUserId
+                  })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  alert("User removed successfully");
+                  loadBoardDetails();
+                  loadTasks();
+                } else {
+                  alert("Error removing user: " + data.detail);
+                }
+              } catch (error) {
+                console.error("Error removing user:", error);
+                alert("An error occurred while removing the user.");
+              }
+            }
+          });
+          li.appendChild(removeBtn);
+        }
+        ul.appendChild(li);
+      });
+      membersContainer.appendChild(ul);
+    }
+
+    async function loadTasks() {
+      try {
+        const response = await fetch(`/boards/${boardId}/tasks`);
+        const tasks = await response.json();
+        window.currentTasks = tasks;
+        tasksList.innerHTML = "";
+        // Counters
+        const totalTasks = tasks.length;
+        const completedTasks = tasks.filter(t => t.completed).length;
+        const activeTasks = totalTasks - completedTasks;
+        document.getElementById("task-counters").innerHTML = `Total: ${totalTasks} | Active: ${activeTasks} | Completed: ${completedTasks}`;
+        tasks.forEach(task => {
+          let dueDateText = "N/A";
+          if (task.dueDate) {
+            let dueDate;
+            if (task.dueDate.seconds) {
+              dueDate = new Date(task.dueDate.seconds * 1000);
+            } else {
+              dueDate = new Date(task.dueDate);
+            }
+            dueDateText = dueDate.toLocaleDateString();
+          }
+          let completedAtText = "";
+          if (task.completed && task.completedAt) {
+            let compDate;
+            if (task.completedAt.seconds) {
+              compDate = new Date(task.completedAt.seconds * 1000);
+            } else {
+              compDate = new Date(task.completedAt);
+            }
+            completedAtText = `<p class="text-sm text-green-600">Completed at: ${compDate.toLocaleString()}</p>`;
+          }
+          const highlightClass = task.highlight === "red" ? "border-2 border-red-500" : "";
+          const taskDiv = document.createElement("div");
+          taskDiv.className = `bg-white rounded-lg shadow p-4 ${highlightClass} flex flex-col md:flex-row md:items-center md:justify-between mb-4`;
+          taskDiv.innerHTML = `
+            <div>
+              <h3 class="text-lg font-bold">${task.title}</h3>
+              <p class="text-gray-600">${task.description || ""}</p>
+              <p class="text-sm text-gray-500">Due: ${dueDateText}</p>
+              ${completedAtText}
+            </div>
+            <div class="flex space-x-2 items-center">
+              <input type="checkbox" class="task-complete-checkbox" data-task-id="${task.id}" ${task.completed ? "checked" : ""}>
+              <button class="edit-task-btn bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded" data-task-id="${task.id}">Edit</button>
+              <button class="delete-task-btn bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded" data-task-id="${task.id}">Delete</button>
+            </div>
+          `;
+          tasksList.appendChild(taskDiv);
+        });
+        document.querySelectorAll(".task-complete-checkbox").forEach(checkbox => {
+          checkbox.addEventListener("change", async (e) => {
+            const taskId = e.target.getAttribute("data-task-id");
+            const completed = e.target.checked;
+            try {
+              const response = await fetch(`/boards/${boardId}/tasks/${taskId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ completed: completed })
+              });
+              const data = await response.json();
+              if (response.ok) {
+                loadTasks();
+              } else {
+                alert("Error updating task: " + data.detail);
+              }
+            } catch (error) {
+              console.error("Error updating task:", error);
+              alert("An error occurred while updating the task.");
+            }
+          });
+        });
+        document.querySelectorAll(".edit-task-btn").forEach(button => {
+          button.addEventListener("click", (e) => {
+            const taskId = e.target.getAttribute("data-task-id");
+            const taskToEdit = window.currentTasks.find(t => t.id === taskId);
+            if (taskToEdit) {
+              currentEditTaskId = taskId;
+              editTaskTitleInput.value = taskToEdit.title;
+              editTaskDescriptionInput.value = taskToEdit.description || "";
+              if (taskToEdit.dueDate) {
+                let dueDate;
+                if (taskToEdit.dueDate.seconds) {
+                  dueDate = new Date(taskToEdit.dueDate.seconds * 1000);
+                } else {
+                  dueDate = new Date(taskToEdit.dueDate);
+                }
+                editTaskDueDateInput.value = dueDate.toISOString().slice(0, 10);
+              } else {
+                editTaskDueDateInput.value = "";
+              }
+              if (taskToEdit.assignedTo && taskToEdit.assignedTo.length > 0) {
+                editTaskAssignedInput.value = taskToEdit.assignedTo.join(", ");
+              } else {
+                editTaskAssignedInput.value = "";
+              }
+              editTaskCompletedCheckbox.checked = taskToEdit.completed;
+              editTaskModal.classList.remove("hidden");
+            } else {
+              console.error("No task found with ID:", taskId);
+            }
+          });
+        });
+        document.querySelectorAll(".delete-task-btn").forEach(button => {
+          button.addEventListener("click", async (e) => {
+            const taskId = e.target.getAttribute("data-task-id");
+            if (confirm("Are you sure you want to delete this task?")) {
+              try {
+                const response = await fetch(`/boards/${boardId}/tasks/${taskId}`, {
+                  method: "DELETE"
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  loadTasks();
+                } else {
+                  alert("Error deleting task: " + data.detail);
+                }
+              } catch (error) {
+                console.error("Error deleting task:", error);
+                alert("An error occurred while deleting the task.");
+              }
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+      }
+    }
+  
+    addTaskBtn.addEventListener("click", () => {
+      addTaskModal.classList.remove("hidden");
+    });
+    cancelTaskBtn.addEventListener("click", () => {
+      addTaskModal.classList.add("hidden");
+      taskTitleInput.value = "";
+      taskDueDateInput.value = "";
+      taskCompletedCheckbox.checked = false;
+    });
+    submitTaskBtn.addEventListener("click", async () => {
+      const title = taskTitleInput.value.trim();
+      const dueDate = taskDueDateInput.value;
+      const completed = taskCompletedCheckbox.checked;
+      if (!title) {
+        alert("Please enter a task title.");
+        return;
+      }
+      const payload = {
+        title: title,
+        description: "",
+        assignedTo: [],
+        dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+        completed: completed
+      };
+      try {
+        const response = await fetch(`/boards/${boardId}/tasks`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (response.ok) {
+          loadTasks();
+          addTaskModal.classList.add("hidden");
+          taskTitleInput.value = "";
+          taskDueDateInput.value = "";
+          taskCompletedCheckbox.checked = false;
+        } else {
+          alert("Error creating task: " + data.detail);
+        }
+      } catch (error) {
+        console.error("Error creating task:", error);
+        alert("An error occurred while creating the task.");
+      }
+    });
+  
+    cancelEditTaskBtn.addEventListener("click", () => {
+      editTaskModal.classList.add("hidden");
+      editTaskTitleInput.value = "";
+      editTaskDescriptionInput.value = "";
+      editTaskDueDateInput.value = "";
+      editTaskAssignedInput.value = "";
+      editTaskCompletedCheckbox.checked = false;
+      currentEditTaskId = null;
+    });
+  
+    submitEditTaskBtn.addEventListener("click", async () => {
+      const title = editTaskTitleInput.value.trim();
+      const description = editTaskDescriptionInput.value.trim();
+      const dueDate = editTaskDueDateInput.value;
+      const assignedStr = editTaskAssignedInput.value.trim();
+      const assignedTo = assignedStr ? assignedStr.split(",").map(s => s.trim()) : [];
+      const completed = editTaskCompletedCheckbox.checked;
+      if (!title) {
+        alert("Please enter a task title.");
+        return;
+      }
+      const payload = {
+        title: title,
+        description: description,
+        dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+        completed: completed,
+        assignedTo: assignedTo
+      };
+      try {
+        const response = await fetch(`/boards/${boardId}/tasks/${currentEditTaskId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (response.ok) {
+          loadTasks();
+          editTaskModal.classList.add("hidden");
+          currentEditTaskId = null;
+        } else {
+          alert("Error updating task: " + data.detail);
+        }
+      } catch (error) {
+        console.error("Error updating task:", error);
+        alert("An error occurred while updating the task.");
+      }
+    });
+  
+    cancelRenameBoardBtn.addEventListener("click", () => {
+      renameBoardModal.classList.add("hidden");
+      newBoardNameInput.value = "";
+    });
+  
+    submitRenameBoardBtn.addEventListener("click", async () => {
+      const newName = newBoardNameInput.value.trim();
+      if (!newName) {
+        alert("Please enter a new board name.");
+        return;
+      }
+      const payload = {
+        newName: newName,
+        current_user_id: currentUserId
+      };
+      try {
+        const response = await fetch(`/boards/${boardId}/rename`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert("Board renamed successfully!");
+          loadBoardDetails();
+          renameBoardModal.classList.add("hidden");
+          newBoardNameInput.value = "";
+        } else {
+          alert("Error renaming board: " + data.detail);
+        }
+      } catch (error) {
+        console.error("Error renaming board:", error);
+        alert("An error occurred while renaming the board.");
+      }
+    });
+  
+    submitAddUserBtn.addEventListener("click", async () => {
+      const userEmail = addUserEmailInput.value.trim();
+      if (!userEmail) {
+        alert("Please enter a user email.");
+        return;
+      }
+      try {
+        const response = await fetch(`/boards/${boardId}/add_user`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_email: userEmail,
+            current_user_id: currentUserId
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert("User added successfully");
+          addUserModal.classList.add("hidden");
+          addUserEmailInput.value = "";
+          loadBoardDetails();
+        } else {
+          alert("Error adding user: " + data.detail);
+        }
+      } catch (error) {
+        console.error("Error adding user:", error);
+        alert("An error occurred while adding the user.");
+      }
+    });
+  
+    cancelAddUserBtn.addEventListener("click", () => {
+      addUserModal.classList.add("hidden");
+      addUserEmailInput.value = "";
+    });
+  </script>
+</body>
+</html>
