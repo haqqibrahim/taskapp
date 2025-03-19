@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <title>Task App - Board</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind dark mode is enabled via the "dark" class on the <html> element -->
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen">
   <!-- Header -->
-  <header class="bg-blue-500 text-white p-4 shadow">
+  <header class="bg-blue-900 text-white p-4 shadow">
     <div class="container mx-auto flex justify-between items-center">
       <h1 class="text-2xl font-bold">Task Board</h1>
       <div class="flex items-center space-x-4">
         <span id="auth-indicator" class="text-sm">Not logged in</span>
-        <button id="logout-btn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition">Logout</button>
+        <button id="logout-btn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Logout</button>
       </div>
     </div>
   </header>
@@ -21,7 +22,7 @@
   <main class="container mx-auto p-4">
     <!-- Board Details Section -->
     <div id="board-details" class="mb-6">
-      <!-- Board name, ID and owner controls (Rename, Add User, Remove Board, Members list) will be loaded here -->
+      <!-- Board name, ID and owner controls will be loaded here -->
     </div>
 
     <!-- Tasks Section -->
@@ -29,8 +30,8 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <h2 class="text-xl font-bold">Tasks</h2>
         <!-- Task counters -->
-        <div id="task-counters" class="text-sm text-gray-700 mt-2 md:mt-0"></div>
-        <button id="add-task-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">Add Task</button>
+        <div id="task-counters" class="text-sm text-gray-300 mt-2 md:mt-0"></div>
+        <button id="add-task-btn" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded transition">Add Task</button>
       </div>
       <div id="tasks-list" class="space-y-4">
         <!-- Task cards will be appended here -->
@@ -40,69 +41,81 @@
 
   <!-- Modal for Adding a User -->
   <div id="add-user-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-4">Add User to Board</h2>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-white">Add User to Board</h2>
       <input type="email" id="add-user-email" placeholder="User email"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <div class="flex justify-end space-x-4">
-        <button id="cancel-add-user-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
-        <button id="submit-add-user-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">Add</button>
+        <button id="cancel-add-user-btn" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg transition text-white">Cancel</button>
+        <button id="submit-add-user-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">Add</button>
       </div>
     </div>
   </div>
 
   <!-- Modal for Adding a Task -->
   <div id="add-task-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-4">Add New Task</h2>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-white">Add New Task</h2>
       <input type="text" id="task-title" placeholder="Task Title"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <input type="date" id="task-due-date"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <div class="flex items-center mb-4">
         <input type="checkbox" id="task-completed" class="mr-2">
-        <label for="task-completed" class="text-gray-700">Mark as complete</label>
+        <label for="task-completed" class="text-gray-300">Mark as complete</label>
       </div>
       <div class="flex justify-end space-x-4">
-        <button id="cancel-task-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
-        <button id="submit-task-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Create Task</button>
+        <button id="cancel-task-btn" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg transition text-white">Cancel</button>
+        <button id="submit-task-btn" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition">Create Task</button>
       </div>
     </div>
   </div>
 
   <!-- Modal for Editing a Task -->
   <div id="edit-task-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-4">Edit Task</h2>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-white">Edit Task</h2>
       <input type="text" id="edit-task-title" placeholder="Task Title"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <textarea id="edit-task-description" placeholder="Task Description"
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4"></textarea>
+                class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4"></textarea>
       <input type="date" id="edit-task-due-date"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <!-- Field for assignment -->
       <input type="text" id="edit-task-assigned" placeholder="Assigned To (comma-separated user IDs)"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <div class="flex items-center mb-4">
         <input type="checkbox" id="edit-task-completed" class="mr-2">
-        <label for="edit-task-completed" class="text-gray-700">Mark as complete</label>
+        <label for="edit-task-completed" class="text-gray-300">Mark as complete</label>
       </div>
       <div class="flex justify-end space-x-4">
-        <button id="cancel-edit-task-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
-        <button id="submit-edit-task-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Save Changes</button>
+        <button id="cancel-edit-task-btn" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg transition text-white">Cancel</button>
+        <button id="submit-edit-task-btn" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition">Save Changes</button>
       </div>
     </div>
   </div>
 
   <!-- Modal for Renaming the Board -->
   <div id="rename-board-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-4">Rename Board</h2>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-white">Rename Board</h2>
       <input type="text" id="new-board-name" placeholder="New Board Name"
-             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 outline-none mb-4">
+             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200 outline-none mb-4">
       <div class="flex justify-end space-x-4">
-        <button id="cancel-rename-board-btn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition">Cancel</button>
-        <button id="submit-rename-board-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Rename</button>
+        <button id="cancel-rename-board-btn" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg transition text-white">Cancel</button>
+        <button id="submit-rename-board-btn" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Removing the Board -->
+  <div id="remove-board-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-white">Remove Board</h2>
+      <p class="text-gray-300 mb-4">This action can only be performed if all non-owning users and tasks have been removed. Are you sure you want to remove this board?</p>
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-remove-board-btn" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg transition text-white">Cancel</button>
+        <button id="submit-remove-board-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">Remove Board</button>
       </div>
     </div>
   </div>
@@ -157,6 +170,11 @@
     const submitAddUserBtn = document.getElementById("submit-add-user-btn");
     const addUserEmailInput = document.getElementById("add-user-email");
 
+    // Remove Board Modal Elements
+    const removeBoardModal = document.getElementById("remove-board-modal");
+    const cancelRemoveBoardBtn = document.getElementById("cancel-remove-board-btn");
+    const submitRemoveBoardBtn = document.getElementById("submit-remove-board-btn");
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
         authIndicator.textContent = `Logged in as ${user.email}`;
@@ -175,11 +193,12 @@
         const response = await fetch(`/boards/${boardId}/details`);
         const board = await response.json();
         boardCreatorId = board.createdBy;
+        // Display board name with a "Creator" badge if current user is the creator.
         boardDetails.innerHTML = `<h2 class="text-2xl font-bold">
                                     ${board.name} ${board.createdBy === currentUserId ? '<span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded ml-2">Creator</span>' : ''}
                                   </h2>
-                                  <p class="text-gray-600">Board ID: ${board.id}</p>`;
-        // If current user is board owner, display owner controls: Rename, Add User, and Remove Board buttons.
+                                  <p class="text-gray-400">Board ID: ${board.id}</p>`;
+        // If current user is board owner, display owner controls: Rename, Add User, Remove Board.
         if (currentUserId === boardCreatorId) {
           let ownerContainer = document.getElementById("owner-buttons-container");
           if (!ownerContainer) {
@@ -204,30 +223,12 @@
           addUserButton.addEventListener("click", () => {
             addUserModal.classList.remove("hidden");
           });
-          // Remove Board Button (only available if conditions are met)
+          // Remove Board Button
           const removeBoardButton = document.createElement("button");
           removeBoardButton.textContent = "Remove Board";
           removeBoardButton.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition";
-          removeBoardButton.addEventListener("click", async () => {
-            if (confirm("Are you sure you want to remove the board? It can only be removed if there are no non-owning users and no tasks.")) {
-              try {
-                const response = await fetch(`/boards/${boardId}`, {
-                  method: "DELETE",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ current_user_id: currentUserId })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                  alert("Board removed successfully!");
-                  window.location.href = "/dashboard";
-                } else {
-                  alert("Error removing board: " + data.detail);
-                }
-              } catch (error) {
-                console.error("Error removing board:", error);
-                alert("An error occurred while removing the board.");
-              }
-            }
+          removeBoardButton.addEventListener("click", () => {
+            removeBoardModal.classList.remove("hidden");
           });
           ownerContainer.appendChild(renameButton);
           ownerContainer.appendChild(addUserButton);
@@ -253,7 +254,7 @@
       members.forEach(memberId => {
         const li = document.createElement("li");
         li.className = "flex items-center space-x-2";
-        li.textContent = memberId; // For demo; ideally resolve to email
+        li.textContent = memberId;
         if (memberId !== boardCreatorId) {
           const removeBtn = document.createElement("button");
           removeBtn.textContent = "Remove";
@@ -320,16 +321,16 @@
             } else {
               compDate = new Date(task.completedAt);
             }
-            completedAtText = `<p class="text-sm text-green-600">Completed at: ${compDate.toLocaleString()}</p>`;
+            completedAtText = `<p class="text-sm text-green-400">Completed at: ${compDate.toLocaleString()}</p>`;
           }
           const highlightClass = task.highlight === "red" ? "border-2 border-red-500" : "";
           const taskDiv = document.createElement("div");
-          taskDiv.className = `bg-white rounded-lg shadow p-4 ${highlightClass} flex flex-col md:flex-row md:items-center md:justify-between mb-4`;
+          taskDiv.className = `bg-gray-800 rounded-lg shadow p-4 ${highlightClass} flex flex-col md:flex-row md:items-center md:justify-between mb-4`;
           taskDiv.innerHTML = `
             <div>
-              <h3 class="text-lg font-bold">${task.title}</h3>
-              <p class="text-gray-600">${task.description || ""}</p>
-              <p class="text-sm text-gray-500">Due: ${dueDateText}</p>
+              <h3 class="text-lg font-bold text-white">${task.title}</h3>
+              <p class="text-gray-300">${task.description || ""}</p>
+              <p class="text-sm text-gray-400">Due: ${dueDateText}</p>
               ${completedAtText}
             </div>
             <div class="flex space-x-2 items-center">
@@ -582,6 +583,31 @@
     cancelAddUserBtn.addEventListener("click", () => {
       addUserModal.classList.add("hidden");
       addUserEmailInput.value = "";
+    });
+  
+    // Remove Board Modal Handlers
+    cancelRemoveBoardBtn.addEventListener("click", () => {
+      removeBoardModal.classList.add("hidden");
+    });
+  
+    submitRemoveBoardBtn.addEventListener("click", async () => {
+      try {
+        const response = await fetch(`/boards/${boardId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ current_user_id: currentUserId })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert("Board removed successfully!");
+          window.location.href = "/dashboard";
+        } else {
+          alert("Error removing board: " + data.detail);
+        }
+      } catch (error) {
+        console.error("Error removing board:", error);
+        alert("An error occurred while removing the board.");
+      }
     });
   </script>
 </body>
